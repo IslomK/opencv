@@ -23,8 +23,10 @@ for root, dirs, files in (os.walk(image_dir)):
             label = os.path.basename(root).replace(" ", "-").lower()
             # x_train.append(path)
             # y_labels.append(label)
-            
+
             pil_image = Image.open(path).convert("L") #greyscale
+            size = (225, 225)
+            final_image = pil_image.resize(size, Image.ANTIALIAS)
             image_array = numpy.array(pil_image, "uint8")
 
             if not label in label_ids:
@@ -34,14 +36,16 @@ for root, dirs, files in (os.walk(image_dir)):
             # print(label_ids)
             # print(image_array)
 
-            faces = face_cascade.detectMultiScale(image_array, scaleFactor=1.5, minNeighbors=5)
+            faces = face_cascade.detectMultiScale(image_array, scaleFactor=1.1, minNeighbors=3)
+            print(len(faces))
 
             for(x,y,w,h) in faces:
                 roi = image_array[y:y+h, x:x+w]
                 x_train.append(roi)
                 y_labels.append(id_)
 
-print(label_ids)
+# print(label_ids)
+print(y_labels)
 
 
 with open('lables.pickle', "wb") as f:

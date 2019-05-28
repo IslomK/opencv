@@ -9,7 +9,7 @@ with open('lables.pickle', "rb") as f:
     og_labels = pickle.load(f)
     labels = {v:k for k, v in og_labels.items()}
 
-url = 'http://10.10.0.156:8080/shot.jpg'
+url = 'http://192.168.3.2:8080/shot.jpg'
 
 
 face_cascade = cv2.CascadeClassifier('data/haarcascade_frontalface_alt2.xml')
@@ -32,7 +32,7 @@ while(True):
         roi_color = img[y:y+h, x:x+w]
 
         id_, conf = recognizer.predict(roi_gray)
-        if conf>=45 and conf<=85:
+        if conf>=40 and conf<=85:
             font = cv2.FONT_HERSHEY_SIMPLEX
             name = labels[id_]
             color = (255,255,255)
