@@ -33,7 +33,7 @@ while (True):
     ret, frame = cap.read()
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    faces = face_cascade.detectMultiScale(frame, scaleFactor=1.5, minNeighbors=5)
+    faces = face_cascade.detectMultiScale(frame, scaleFactor=1.0, minNeighbors=5)
     for x,y,w,h in faces:
         roi_gray = gray[y:y+h, x:x+w]
         roi_color = frame[y:y+h, x:x+w]
@@ -43,7 +43,9 @@ while (True):
         
         end_coord_x = x + w
         end_coord_y = y + h
-    
+
+        roi_image = gray[y+10:y+h+10, x+10:x+h+10]
+
         rectangle = cv2.rectangle(frame, (x, y), (end_coord_x, end_coord_y), color, stroke)
         if len(faces)>0:
             img_num += 1
@@ -51,7 +53,7 @@ while (True):
             text = "Face detected"
             cv2.putText(frame, "Please don't move", (150,150), font, 1,color, stroke, cv2.LINE_AA)        
             if img_num % 2 == 0:
-                cv2.imwrite(os.path.join(image_dir, str(folder_numbers + 1), 'image{}.png'.format(img_num)), roi_gray)
+                cv2.imwrite(os.path.join(image_dir, str(folder_numbers + 1), 'image{}.png'.format(img_num)), roi_image)
     
     cv2.putText(frame, text, (x,y), font, 1,color, stroke, cv2.LINE_AA)
     cv2.imshow("frame", frame)

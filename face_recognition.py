@@ -9,7 +9,7 @@ with open('lables.pickle', "rb") as f:
     labels = {v:k for k, v in og_labels.items()}
 
 
-face_cascade = cv2.CascadeClassifier('data/haarcascade_frontalface_alt2.xml')
+face_cascade = cv2.CascadeClassifier('data/haarcascade_frontalface_alt.xml')
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 recognizer.read('trainer.yml')
 
@@ -25,13 +25,18 @@ while(True):
         roi_color = frame[y:y+h, x:x+w]
 
         id_, conf = recognizer.predict(roi_gray)
-        if conf>=45 and conf<=85:
+        if conf>=50 and conf<=60:
             font = cv2.FONT_HERSHEY_SIMPLEX
             name = labels[id_]
             color = (255,255,255)
             stroke = 2
             cv2.putText(frame, name, (x,y), font, 1, color, stroke, cv2.LINE_AA)
-
+        else:
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            name = 'Unknown face detected'
+            color = (255,255,255)
+            stroke = 2
+            cv2.putText(frame, name, (x,y), font, 1, color, stroke, cv2.LINE_AA)
 
         img_item = "my-image.png"
         cv2.imwrite(img_item, roi_gray)
