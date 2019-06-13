@@ -1,4 +1,9 @@
 import cv2
+import requests
+import numpy as np
+
+url = 'http://10.10.1.52:8080/shot.jpg'
+
 
 # Pretrained classes in the model
 classNames = {0: 'background',
@@ -33,11 +38,15 @@ image = cv2.imread("image.jpg")
 
 
 while(True):
+        img_resp = requests.get(url)
+        img_array = np.array(bytearray(img_resp.content), dtype=np.uint8)
+        img = cv2.imdecode(img_array, -1)
+        
         ret, frame = cap.read()
-        model.setInput(cv2.dnn.blobFromImage(frame, size=(300, 300), swapRB=True))
+        model.setInput(cv2.dnn.blobFromImage(img, size=(300, 300), swapRB=True))
         output = model.forward()
         # print(output[0,0,:,:].shape)
-        image_height, image_width, _ = frame.shape
+        image_height, image_width, _ = img.shape
 
 
         for detection in output[0, 0, :, :]:
@@ -50,10 +59,10 @@ while(True):
                         box_y = detection[4] * image_height
                         box_width = detection[5] * image_width
                         box_height = detection[6] * image_height
-                        cv2.rectangle(frame, (int(box_x), int(box_y)), (int(box_width), int(box_height)), (23, 230, 210), thickness=1)
-                        cv2.putText(frame,class_name ,(int(box_x), int(box_y+.05*image_height)),cv2.FONT_HERSHEY_SIMPLEX,(.005*image_width),(0, 0, 255))
+                        cv2.rectangle(img, (int(box_x), int(box_y)), (int(box_width), int(box_height)), (23, 230, 210), thickness=1)
+                        cv2.putText(img,class_name ,(int(box_x), int(box_y+.05*image_height)),cv2.FONT_HERSHEY_SIMPLEX,(.005*image_width),(0, 0, 255))
 
-        cv2.imshow('frame', frame)
+        cv2.imshow('frame', img)
 
         if cv2.waitKey(20) & 0xFF == ord('q'):
                 break
