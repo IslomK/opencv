@@ -27,12 +27,14 @@ while(True):
         roi_color = frame[y:y+h, x:x+w]
 
         id_, conf = recognizer.predict(roi_gray)
-        if conf>=40 and conf<=60:
+        if conf>=40  and conf<=60:
             font = cv2.FONT_HERSHEY_SIMPLEX
             name = labels[id_]
             color = (255,255,255)
             stroke = 2
+            conf = '{0}%'.format(round(100 - confidence))
             cv2.putText(frame, name, (x,y), font, 1, color, stroke, cv2.LINE_AA)
+            cv2.putText(frame, conf, (x,y), font, 1, color, stroke, cv2.LINE_AA)
         else:
             font = cv2.FONT_HERSHEY_SIMPLEX
             name = 'Unknown face detected'
@@ -49,9 +51,6 @@ while(True):
         end_coord_y = y + h
 
         cv2.rectangle(frame, (x, y), (end_coord_x, end_coord_y), color, stroke)
-    
-    for x,y,w,h in eyes:
-        cv2.rectangle(frame, (x,y), (x+w, y+h), (0,255,0), 2)
 
     cv2.imshow('frame', frame)
 
