@@ -1,8 +1,18 @@
 import cv2
 import requests
 import numpy as np
+from imutils.video.pivideostream import PiVideoStream
+from picamera.array import PiRGBArray
+from picamera import PiCamera
+import imutils
+import time
+from imutils.video import FPS
 
-url = 'http://10.10.1.52:8080/shot.jpg'
+vs = PiVideoStream().start()
+time.sleep(2.0)
+fps = FPS().start()
+
+#url = 'http://10.10.1.52:8080/shot.jpg'
 
 
 # Pretrained classes in the model
@@ -30,22 +40,24 @@ def id_class_name(class_id, classes):
         if class_id == key:
             return value
 
-cap = cv2.VideoCapture(0);
-# Loading model
+
+# Loading model cap = cv2.VideoCapture(0);
 model = cv2.dnn.readNetFromTensorflow('models/frozen_inference_graph.pb',
                                       'models/ssd_mobilenet_v2_coco_2018_03_29.pbtxt')
 image = cv2.imread("image.jpg")
 
 
-while(True):
-        img_resp = requests.get(url)
-        img_array = np.array(bytearray(img_resp.content), dtype=np.uint8)
-        img = cv2.imdecode(img_array, -1)
+while True:
+#        img_resp = requests.get(url)
+#        img_array = np.array(bytearray(img_resp.content), dtype=np.uint8)
+#        img = cv2.imdecode(img_array, -1)
         
-        ret, frame = cap.read()
+        # print(output[0,0,:,:].shape)        ret, frame = cap.read()
+        img = vs.read()
+        img = imutils.resize(img, width=400)
         model.setInput(cv2.dnn.blobFromImage(img, size=(300, 300), swapRB=True))
         output = model.forward()
-        # print(output[0,0,:,:].shape)
+
         image_height, image_width, _ = img.shape
 
 
@@ -61,11 +73,16 @@ while(True):
                         box_height = detection[6] * image_height
                         cv2.rectangle(img, (int(box_x), int(box_y)), (int(box_width), int(box_height)), (23, 230, 210), thickness=1)
                         cv2.putText(img,class_name ,(int(box_x), int(box_y+.05*image_height)),cv2.FONT_HERSHEY_SIMPLEX,(.005*image_width),(0, 0, 255))
-
         cv2.imshow('frame', img)
-
+        fps.stop()
+        print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
+        print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
         if cv2.waitKey(20) & 0xFF == ord('q'):
-                break
+
+
+            vs.stop()
+            break
+
 # cv2.imwrite("image_box_text.jpg",image)
 
 cv2.waitKey(0)
