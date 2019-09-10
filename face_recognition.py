@@ -25,7 +25,15 @@ eye_cascade = cv2.CascadeClassifier('data/haarcascade_eye.xml')
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 recognizer.read('trainer.yml')
 
+<<<<<<< HEAD
 #cap = cv2.VideoCapture(0)
+=======
+cap = cv2.VideoCapture('tcpclientsrc host=192.168.3.6 port=5000 ! gdpdepay ! rtph264depay ! ffdec_h264 ! ffmpegcolorspace ! autovideosink sync=false')
+
+if not cap.isOpened():
+    print('VideoCapture not opened')
+    exit(0)
+>>>>>>> 7471fc8037078655045f9d07e08bead75bf3bd43
 
 while(True):
     #ret, frame = cap.read()
