@@ -2,7 +2,7 @@ certifi==2019.3.9
 chardet==3.0.4
 idna==2.8
 imutils==0.5.2
-joblib==0.13.2
+joblib==1.2.0
 numpy==1.16.4
 opencv-contrib-python==3.4.4.19
 opencv-python==3.4.4.19
